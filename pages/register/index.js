@@ -1,4 +1,9 @@
 import * as React from "react";
+import axios from "axios";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -12,44 +17,71 @@ import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useRouter } from "next/router";
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Shivendra
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
-// TODO remove, this demo shouldn't need to reset the theme.
-
-const defaultTheme = createTheme();
-
-export default function SignInSide() {
-  const handleSubmit = (event) => {
+function SignInSide() {
+  const router = useRouter();
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      username: data.get("username"),
-      email: data.get("email"),
-      password: data.get("password"),
-      password2: data.get("password2"),
+
+    const { username, email, password, password2, mobile, address, age } =
+      event.currentTarget.elements;
+
+    const userData = {
+      username: username.value,
+      email: email.value,
+      password: password.value,
+      password2: password2.value,
       role: "client",
-    });
+      mobile: mobile.value,
+      address: address.value,
+      age: parseInt(age.value, 10),
+    };
+    console.log(userData);
+
+    if (userData.age > 150) {
+      toast.error("Age must be less than or equal to 150.");
+      return;
+    }
+
+    if (userData.mobile.length !== 10) {
+      toast.error("Mobile number must be exactly 10 characters long.");
+      return;
+    }
+
+    if (!userData.password || !userData.email || !userData.username) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    toast.success("Form submitted successfully");
+
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/api/register",
+        userData
+      );
+      const { message, user } = res.data;
+      console.log(message);
+
+      const { newUser, token } = user;
+      localStorage.setItem("token", token);
+      localStorage.setItem("userData", JSON.stringify(newUser));
+      
+      
+      if (token) {
+        toast.success("User Registered Succesfully!")
+        router.push("/");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error registering user");
+    }
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <ThemeProvider theme={createTheme()}>
+      <ToastContainer />
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
         <Grid
@@ -92,7 +124,7 @@ export default function SignInSide() {
               sx={{ mt: 1 }}
             >
               <TextField
-                sx={{ mr: 4 }}
+                fullWidth
                 margin="normal"
                 required
                 id="username"
@@ -100,15 +132,30 @@ export default function SignInSide() {
                 name="username"
                 autoComplete="username"
                 autoFocus
+                inputProps={{ minLength: 3 }} // Minimum length of 3 characters
               />
               <TextField
+                sx={{ mr: 4 }}
                 margin="normal"
                 required
                 id="age"
                 label="Age"
                 name="age"
+                type="number" // Set input type to "number"
                 autoComplete="age"
                 autoFocus
+                inputProps={{ min: 0 }} // Minimum value of 0
+              />
+              <TextField
+                margin="normal"
+                required
+                id="mobile"
+                label="Mobile No."
+                name="mobile"
+                autoComplete="tel" // Set input type to "tel"
+                autoFocus
+                pattern="[0-9]{10}" // 10-digit numeric pattern
+                type="number"
               />
               <TextField
                 margin="normal"
@@ -118,6 +165,17 @@ export default function SignInSide() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                autoFocus
+                type="email"
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="address"
+                label="Address"
+                name="address"
+                autoComplete="address"
                 autoFocus
               />
 
@@ -129,13 +187,13 @@ export default function SignInSide() {
                 label="Password"
                 type="password"
                 id="password"
-                autoComplete="current-password"
+                autoComplete="new-password" // Set autocomplete to "new-password"
               />
               <TextField
                 margin="normal"
                 required
                 name="password2"
-                label="Confirm Password"
+                label="Confirm password"
                 type="password"
                 id="password2"
               />
@@ -156,7 +214,19 @@ export default function SignInSide() {
                   </Link>
                 </Grid>
               </Grid>
-              <Copyright sx={{ mt: 5 }} />
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                align="center"
+                sx={{ mt: 5 }}
+              >
+                {`Copyright © `}
+                <Link color="inherit" href="https://mui.com/">
+                  Shivendra
+                </Link>{" "}
+                {new Date().getFullYear()}
+                {"."}
+              </Typography>
             </Box>
           </Box>
         </Grid>
@@ -164,3 +234,5 @@ export default function SignInSide() {
     </ThemeProvider>
   );
 }
+
+export default SignInSide;

@@ -1,4 +1,9 @@
 import * as React from 'react';
+
+import axios from 'axios'
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,6 +17,7 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useRouter } from 'next/router';
 
 function Copyright(props) {
   return (
@@ -31,17 +37,52 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
-  const handleSubmit = (event) => {
+  const router = useRouter()
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+
+    const {email, password} =
+      event.currentTarget.elements;
+
+    const userData = {
+      email: email.value,
+      password: password.value,
+    };
+
+    if (!userData.password || !userData.email) {
+      toast.error("All fields are required");
+      return;
+    }
+    console.log(userData);
+
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/api/login",
+        userData
+      );
+      const { message, user } = res.data;
+      console.log(message);
+
+      const { currentUser, token } = user;
+      localStorage.setItem("token", token);
+      localStorage.setItem("userData", JSON.stringify(currentUser));
+      
+      if (token) {
+        toast.success("User Logged In")
+        setTimeout(()=>{
+          router.push("/");
+        }, 1200)
+       
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Invalid email or password");
+    }
   };
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      <ToastContainer/>
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
         <Grid
