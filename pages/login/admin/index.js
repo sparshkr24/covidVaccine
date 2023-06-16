@@ -111,7 +111,7 @@ export default function SignInSide() {
               <Grid container>
                 <Grid item xs>
                   <Link href="/login/admin" variant="body2">
-                    Login as Admin
+                    Login as User
                   </Link>
                 </Grid>
                 <Grid item>
