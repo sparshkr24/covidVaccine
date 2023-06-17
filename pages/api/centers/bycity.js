@@ -1,19 +1,21 @@
-import prisma from '../../../prisma/prisma';
-import auth from '../../../middleware/auth';
+import prisma from "../../../prisma/prisma";
+import auth from "../../../middleware/auth";
 
 export default auth(async function handler(req, res) {
   try {
-    const {city} = req.query
+    let { city } = req.query;
+    city =
+      city.charAt(0).toUpperCase() + city.slice(1).toLowerCase();
 
     const centersByCity = await prisma.VaccinationCenter.findMany({
       where: {
         city
-      }
+      },
     });
 
     res.status(200).json(centersByCity);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
