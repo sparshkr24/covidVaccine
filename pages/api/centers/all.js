@@ -1,7 +1,7 @@
 import prisma from '../../../prisma/prisma';
 import auth from '../../../middleware/auth';
 
-export default auth(async function handler(req, res) {
+const centersAll = async (req, res) =>{
   try {
     if (req.method === 'DELETE') {
       const {centerId} = req.query;
@@ -20,15 +20,7 @@ export default auth(async function handler(req, res) {
     }
 
     if (Object.keys(req.query).length === 0) {
-      const vaccinationCenters = await prisma.VaccinationCenter.findMany({
-        select: {
-          id: true,
-          centerName: true,
-          city: true,
-          workingHours: true,
-          slotsLeft: true,
-        },
-      });
+      const vaccinationCenters = await prisma.VaccinationCenter.findMany();
       return res.status(200).json(vaccinationCenters);
     }
 
@@ -46,4 +38,6 @@ export default auth(async function handler(req, res) {
     console.error(error);
     return res.status(500).json({ message: 'Internal Server Error' });
   }
-});
+}
+
+export default auth(centersAll)

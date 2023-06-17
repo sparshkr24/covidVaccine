@@ -164,7 +164,7 @@ export default function Album() {
       const res = await api.post("/bookslot", AppointmentData);
       const result = res.data;
       console.log(result);
-      if (!res.status == 200) {
+      if (res.status != 200) {
         toast.error("Cannot book this slot!");
       } else {
         toast.success("Congratulations!...Slot Booked!");

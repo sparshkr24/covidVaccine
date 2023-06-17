@@ -1,7 +1,7 @@
 import prisma from "../../../prisma/prisma";
 import auth from "../../../middleware/auth";
 
-export default async function handler(req, res) {
+export default auth(async function handler(req, res) {
   if (req.method === "POST") {
     const {
       centerName,
@@ -38,4 +38,4 @@ export default async function handler(req, res) {
   } else {
     res.status(404).json({ error: "Invalid request method." });
   }
-}
+})
