@@ -5,13 +5,13 @@ export default auth(async function handler(req, res) {
   try {
     const {city} = req.query
 
-    const vaccinationCenters = await prisma.VaccinationCenter.findMany({
+    const centersByCity = await prisma.VaccinationCenter.findMany({
       where: {
         city
       }
     });
 
-    res.status(200).json(vaccinationCenters);
+    res.status(200).json(centersByCity);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
