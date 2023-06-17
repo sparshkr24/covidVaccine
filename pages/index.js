@@ -25,7 +25,7 @@ import Link from "@mui/material/Link";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import DataObjectIcon from "@mui/icons-material/DataObject";
-import { TextField } from "@mui/material";
+import { Chip, TextField } from "@mui/material";
 
 function Copyright() {
   return (
@@ -116,25 +116,27 @@ export default function Album() {
     }
     // console.log(userData);
 
-    // try {
-    //   const res = await api.get("/centers/all");
-    //   const { message, user } = res.data;
-    //   console.log(message);
+    try {
+      const res = await api.get(`/centers/bycity?city=${userData.city}`);
+      setData(res.data);
+    } catch (error) {
+      console.error(error);
+      toast.error("Invalid email or password");
+    }
+  };
 
-    //   const { currentUser, token } = user;
-    //   localStorage.setItem("token", token);
-    //   localStorage.setItem("userData", JSON.stringify(currentUser));
+  const getDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1; // January is 0, so we add 1
+    const day = today.getDate();
 
-    //   if (token) {
-    //     toast.success("User Logged In");
-    //     setTimeout(() => {
-    //       router.push("/");
-    //     }, 1200);
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    //   toast.error("Invalid email or password");
-    // }
+    // Format the date as desired
+    const formattedDate = `${year}-${month.toString().padStart(2, "0")}-${day
+      .toString()
+      .padStart(2, "0")}`;
+
+    return formattedDate;
   };
   // console.log(user);
   return (
@@ -167,7 +169,7 @@ export default function Album() {
           </Grid>
         </Toolbar>
       </AppBar>
-      <main>
+      <main className="w-full">
         {/* Hero unit */}
         <Box
           sx={{
@@ -221,7 +223,7 @@ export default function Album() {
             </Box>
           </Container>
         </Box>
-        <Container sx={{ py: 8 }} maxWidth="md">
+        <Container sx={{ py: 8 }} maxWidth="lg">
           {/* End hero unit */}
           <Grid container spacing={4}>
             {data.map((item) => (
@@ -242,13 +244,41 @@ export default function Album() {
                     image="https://source.unsplash.com/random?wallpapers"
                   />
                   <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      Heading
+                    <Typography gutterBottom variant="h5" component="h2" color="primary" fontWeight="bold">
+                      {item.centerName}
                     </Typography>
                     <Typography>
-                      This is a media card. You can use this section to describe
-                      the content.
+                      Location:{" "}
+                      <span className="font-bold text-lg">{item.city}</span>{" "}
                     </Typography>
+                    <Typography>
+                      Working hours:{" "}
+                      <span className="font-bold text-lg">
+                        {item.workingHours}
+                      </span>{" "}
+                    </Typography>
+                    <Typography>
+                      Slots Available on {getDate()}:{" "}
+                      <span className="font-bold text-lg">
+                        {item.slotsLeft}
+                      </span>
+                    </Typography>
+                    <div className="pt-3">
+                      <Stack direction="row" spacing={1}>
+                        <Chip
+                          label={`Covaxin: ${item.covaxin}`}
+                          color="primary"
+                        />
+                        <Chip
+                          label={`Covishield: ${item.covishield}`}
+                          color="primary"
+                        />
+                        <Chip
+                          label={`Pfizer: ${item.pfizer}`}
+                          color="primary"
+                        />
+                      </Stack>
+                    </div>
                   </CardContent>
                   <CardActions>
                     <Button size="small">View</Button>
