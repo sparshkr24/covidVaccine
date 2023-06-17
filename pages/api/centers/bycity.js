@@ -4,12 +4,11 @@ import auth from "../../../middleware/auth";
 export default auth(async function handler(req, res) {
   try {
     let { city } = req.query;
-    city =
-      city.charAt(0).toUpperCase() + city.slice(1).toLowerCase();
+    city = city.toLowerCase();
 
     const centersByCity = await prisma.VaccinationCenter.findMany({
       where: {
-        city
+        city,
       },
     });
 

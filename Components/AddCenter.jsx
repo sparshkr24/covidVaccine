@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
+import api from '../helper/api'
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";;
 
 export default function VaccinationCenterForm() {
   const [formData, setFormData] = useState({
@@ -14,24 +18,47 @@ export default function VaccinationCenterForm() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const parsedValue = name === "slotsLeft" || name === "covaxin" || name === "covishield" || name === "pfizer"
-      ? parseInt(value, 10)
-      : value;
-      
+    const parsedValue =
+      name === "slotsLeft" ||
+      name === "covaxin" ||
+      name === "covishield" ||
+      name === "pfizer"
+        ? parseInt(value, 10)
+        : value;
+
     setFormData((prevData) => ({
       ...prevData,
       [name]: parsedValue,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Perform any desired actions with the form data
-    console.log(formData);
+    if (
+      !formData.centerName ||
+      !formData.city ||
+      !formData.workingHours ||
+      !formData.slotsLeft ||
+      !formData.covaxin ||
+      !formData.covishield ||
+      !formData.pfizer
+    ) {
+      toast.error("All fields are required");
+      return;
+    }
+    try {
+      const res = await api.post("/centers/create", formData);
+      if (res.status == 201) {
+        toast.success("Vaccination Center has been added");
+        console.log(res.data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
-
   return (
     <>
+      <ToastContainer />
       <div className="mt-10">
         <p className="text-center text-xl font-bold text-blue-800">
           Add Center
