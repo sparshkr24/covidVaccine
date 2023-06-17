@@ -40,4 +40,4 @@ const centersAll = async (req, res) =>{
   }
 }
 
-export default auth(centersAll)
+export default centersAll
