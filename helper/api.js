@@ -6,6 +6,10 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   config.headers["Access-Control-Allow-Origin"] = "*";
+  config.headers["Access-Control-Allow-Headers"] =
+    "Origin, X-Requested-With, Content-Type, Accept";
+  config.headers["Access-Control-Allow-Methods"] =
+    "GET, POST, PUT, PATCH, DELETE, OPTIONS";
   return config;
 });
 
