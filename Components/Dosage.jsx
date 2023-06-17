@@ -1,5 +1,5 @@
 import * as React from "react";
-import api from "../helper/api";
+import api, { setAuthToken } from "../helper/api";
 
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -12,6 +12,7 @@ import TableRow from "@mui/material/TableRow";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "./Loader";
 
 const columns = [
   { id: "name", label: "Center Name", minWidth: 170 },
@@ -44,12 +45,17 @@ function createData(id, name, city, covaxin, covishield, pfizer) {
 }
 
 export default function StickyHeadTable() {
+  const [isLoading, setIsLoading] = React.useState(true);
   const [rows, setRows] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   React.useEffect(() => {
     const fetchData = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        setAuthToken(token);
+      }
       const res = await api.get("/centers/all");
       const newData = res.data;
       const data = newData.map((item, i) => {
@@ -63,6 +69,7 @@ export default function StickyHeadTable() {
         );
       });
       setRows(data);
+      setIsLoading(false)
     };
 
     fetchData();
@@ -75,23 +82,6 @@ export default function StickyHeadTable() {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
-  };
-
-  const handleRemove = (centerId) => {
-    const removeCenter = async () => {
-      try {
-        const res = await api.delete(`/centers/all?centerId=${centerId}`);
-        if (res.status === 200) {
-          toast.success("Record deleted successfully!");
-
-          // Remove the deleted record from the state
-          setRows((prevRows) => prevRows.filter((row) => row.id !== centerId));
-        }
-      } catch (error) {
-        toast.error("Something went wrong...!");
-      }
-    };
-    removeCenter();
   };
 
   return (
@@ -118,6 +108,7 @@ export default function StickyHeadTable() {
                 </TableRow>
               </TableHead>
               <TableBody>
+                {isLoading && <Loader />}
                 {rows
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => {

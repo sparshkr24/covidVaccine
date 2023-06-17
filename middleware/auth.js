@@ -6,7 +6,7 @@ export default function auth(handler) {
 
     try {
       // Verify the token
-      const decodedToken = jwt.verify(token, 'your-secret-key');
+      const decodedToken = jwt.verify(token, 'shivendra123');
 
       // Access the decoded token payload
       const userId = decodedToken.userId;

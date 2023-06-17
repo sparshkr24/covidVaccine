@@ -1,5 +1,5 @@
 import * as React from "react";
-import api from "../helper/api";
+import api, { setAuthToken } from "../helper/api";
 
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -50,6 +50,10 @@ export default function StickyHeadTable() {
 
   React.useEffect(() => {
     const fetchData = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        setAuthToken(token);
+      }
       const res = await api.get("/centers/all");
       const newData = res.data;
       const data = newData.map((item, i) => {
@@ -79,6 +83,10 @@ export default function StickyHeadTable() {
   const handleRemove = (centerId) => {
     const removeCenter = async () => {
       try {
+        const token = localStorage.getItem("token");
+        if (token) {
+          setAuthToken(token);
+        }
         const res = await api.delete(`/centers/all?centerId=${centerId}`);
         if (res.status === 200) {
           toast.success("Record deleted successfully!");
@@ -97,7 +105,9 @@ export default function StickyHeadTable() {
     <>
       <div className="mt-6">
         <ToastContainer />
-        <p className="ml-2 font-bold text-xl text-blue-800 mb-4">Remove Centers</p>
+        <p className="ml-2 font-bold text-xl text-blue-800 mb-4">
+          Remove Centers
+        </p>
         <Paper sx={{ width: "100%", overflow: "hidden" }}>
           <TableContainer sx={{ maxHeight: 610 }} className="dark-table">
             <Table stickyHeader aria-label="sticky table">

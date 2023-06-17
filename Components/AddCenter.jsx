@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
-import api from '../helper/api'
+import api, { setAuthToken } from "../helper/api";
 
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";;
+import "react-toastify/dist/ReactToastify.css";
 
 export default function VaccinationCenterForm() {
   const [formData, setFormData] = useState({
@@ -47,6 +47,10 @@ export default function VaccinationCenterForm() {
       return;
     }
     try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        setAuthToken(token);
+      }
       const res = await api.post("/centers/create", formData);
       if (res.status == 201) {
         toast.success("Vaccination Center has been added");
