@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: 'https://covid-vaccine-nine.vercel.app/api',
 });
 
 export const setAuthToken = (token) => {
