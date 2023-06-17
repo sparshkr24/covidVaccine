@@ -2,7 +2,7 @@ import prisma from "../../../prisma/prisma";
 import auth from "../../../middleware/auth";
 
 export default auth(async function handler(req, res) {
-  if (req.method === "POST") {
+  if (req.method == "POST") {
     const {
       centerName,
       city,

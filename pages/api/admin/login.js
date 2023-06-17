@@ -3,7 +3,7 @@ import prisma from '../../../prisma/prisma';
 import jwt from 'jsonwebtoken';
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
+  if (req.method != 'POST') {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 

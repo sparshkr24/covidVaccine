@@ -2,7 +2,7 @@ import auth from '@/middleware/auth';
 import prisma from '../../prisma/prisma';
 
 export default auth(async function handler(req, res) {
-  if (req.method !== 'POST') {
+  if (req.method != 'POST') {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 

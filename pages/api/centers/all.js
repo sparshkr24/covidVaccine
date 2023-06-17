@@ -3,7 +3,7 @@ import auth from '../../../middleware/auth';
 
 const centersAll = async (req, res) =>{
   try {
-    if (req.method === 'DELETE') {
+    if (req.method == 'DELETE') {
       const {centerId} = req.query;
 
       if (!centerId) {
