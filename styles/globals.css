@@ -25,3 +25,15 @@ body {
     )
     rgb(var(--background-start-rgb));
 } */
+
+.dark-table {
+  background-color: #2469da4f;
+  color: white;
+}
+
+.dark-table-header {
+  background-color: #031d48e6;
+  font-weight: bold;
+  color: white;
+}
+

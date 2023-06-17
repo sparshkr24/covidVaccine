@@ -40,7 +40,7 @@ export default function ButtonAppBar({ activeOption, setActiveOption }) {
       <AppBar position="static">
         <Toolbar>
           <Hidden mdUp>
-            <Grid container justifyContent="space-between">
+            <Grid container justifyContent="space-between" alignItems='center'>
               <Grid item>
                 <IconButton
                   size="large"
@@ -78,7 +78,7 @@ export default function ButtonAppBar({ activeOption, setActiveOption }) {
                   </MenuItem>
                 </Menu>
               </Grid>
-              <Grid item> <button onClick={handleLogout}> Logout</button></Grid>
+              <Grid item> <button onClick={handleLogout} className="hover:bg-white hover:text-blue-800 py-1.5 px-3 rounded-xl hover:scale-105 duration-200"> Logout</button></Grid>
             </Grid>
           </Hidden>
           <Hidden mdDown>
@@ -141,7 +141,7 @@ export default function ButtonAppBar({ activeOption, setActiveOption }) {
                 </Grid>
               </Grid>
               <Grid item>
-                <button onClick={handleLogout} className="hover:text-blue-600 hover:bg-white py-1.5 px-3 rounded-xl">
+                <button onClick={handleLogout} className="hover:text-blue-600 hover:bg-white py-1.5 px-3 rounded-xl hover:scale-105 duration-200">
                   Logout
                 </button>
               </Grid>
