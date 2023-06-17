@@ -19,6 +19,8 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useRouter } from "next/router";
 
+import PersonIcon from '@mui/icons-material/Person';
+
 function SignInSide() {
   const router = useRouter();
   const handleSubmit = async (event) => {
@@ -107,8 +109,8 @@ function SignInSide() {
               alignItems: "center",
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <LockOutlinedIcon />
+            <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
+              <PersonIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
               Sign Up

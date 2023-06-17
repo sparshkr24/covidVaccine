@@ -1,5 +1,5 @@
 import { compare } from 'bcrypt';
-import prisma from '../../prisma/prisma';
+import prisma from '../../../prisma/prisma';
 import jwt from 'jsonwebtoken';
 
 export default async function handler(req, res) {
@@ -20,6 +20,7 @@ export default async function handler(req, res) {
     if (!currentUser) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
+    console.log('role: ', currentUser.role);
 
     // Verify the password
     const passwordMatch = await compare(password, currentUser.password);
@@ -27,13 +28,18 @@ export default async function handler(req, res) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
+    // Check if the user's role is "admin"
+    if (currentUser.role !== 'ADMIN') {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
     // Generate JWT token
     const token = jwt.sign({ userId: currentUser.id }, 'shivendra123', { expiresIn: '2h' });
 
     // Set the token as an HTTP-only cookie
-    const data = {currentUser, token}
+    const data = { currentUser, token };
 
-    return res.status(201).json({ message: 'User registered successfully', user: data });
+    return res.status(201).json({ message: 'User logged in successfully', user: data });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Internal Server Error' });

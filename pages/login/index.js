@@ -1,6 +1,5 @@
 import * as React from "react";
 
-import axios from "axios";
 import api from "../../helper/api";
 
 import { ToastContainer, toast } from "react-toastify";
@@ -21,6 +20,8 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useRouter } from "next/router";
 
+import PersonIcon from '@mui/icons-material/Person';
+
 function Copyright(props) {
   return (
     <Typography
@@ -31,7 +32,7 @@ function Copyright(props) {
     >
       {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        Shivendra
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -85,7 +86,7 @@ export default function SignInSide() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <ToastContainer />
-      <Grid container component="main" sx={{ height: "100vh" }}>
+      <Grid container component="main" sx={{ height: "100vh"}}>
         <CssBaseline />
         <Grid
           item
@@ -114,8 +115,8 @@ export default function SignInSide() {
               alignItems: "center",
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <LockOutlinedIcon />
+            <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
+              <PersonIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
               Sign in
