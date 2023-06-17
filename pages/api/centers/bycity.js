@@ -3,13 +3,12 @@ import auth from '../../../middleware/auth';
 
 export default auth(async function handler(req, res) {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = 10; // Number of items per page
-    const offset = (page - 1) * limit;
+    const {city} = req.query
 
     const vaccinationCenters = await prisma.VaccinationCenter.findMany({
-      take: limit,
-      skip: offset,
+      where: {
+        city
+      }
     });
 
     res.status(200).json(vaccinationCenters);

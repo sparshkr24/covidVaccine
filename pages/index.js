@@ -1,4 +1,5 @@
 import * as React from "react";
+import api from "../helper/api";
 
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -47,6 +48,8 @@ const defaultTheme = createTheme();
 export default function Album() {
   const router = useRouter();
   const [user, setUser] = useState({});
+  const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -58,6 +61,39 @@ export default function Album() {
       setUser(userData);
     }
   }, []);
+
+  const fetchData = async () => {
+    try {
+      const res = await api.get(`/centers/all?page=${page}`);
+      const newData = res.data;
+      setData((prevData) => [...prevData, ...newData]);
+      setPage((prevPage) => prevPage + 1);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleScroll = () => {
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+    if (scrollTop + clientHeight >= scrollHeight - 10) {
+      fetchData();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log("centres: ", data);
+  }, [data]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -78,13 +114,10 @@ export default function Album() {
       toast.error("Please enter your city");
       return;
     }
-    console.log(userData);
+    // console.log(userData);
 
     // try {
-    //   const res = await axios.post(
-    //     "http://localhost:3000/api/login",
-    //     userData
-    //   );
+    //   const res = await api.get("/centers/all");
     //   const { message, user } = res.data;
     //   console.log(message);
 
@@ -93,18 +126,17 @@ export default function Album() {
     //   localStorage.setItem("userData", JSON.stringify(currentUser));
 
     //   if (token) {
-    //     toast.success("User Logged In")
-    //     setTimeout(()=>{
+    //     toast.success("User Logged In");
+    //     setTimeout(() => {
     //       router.push("/");
-    //     }, 1200)
-
+    //     }, 1200);
     //   }
     // } catch (error) {
     //   console.error(error);
     //   toast.error("Invalid email or password");
     // }
   };
-  console.log(user);
+  // console.log(user);
   return (
     <ThemeProvider theme={defaultTheme}>
       <ToastContainer />
@@ -192,8 +224,8 @@ export default function Album() {
         <Container sx={{ py: 8 }} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
-            {cards.map((card) => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
+            {data.map((item) => (
+              <Grid item key={item.id} xs={12} sm={6} md={4}>
                 <Card
                   sx={{
                     height: "100%",
@@ -239,7 +271,7 @@ export default function Album() {
           color="text.secondary"
           component="p"
         >
-          Something here to give the footer a purpose!
+          Looking forward to hearing from you soon
         </Typography>
         <Copyright />
       </Box>
