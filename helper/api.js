@@ -4,6 +4,10 @@ const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
 
+// const api = axios.create({
+//     baseURL: "http://localhost:3000/api",
+//   });
+
 api.interceptors.request.use((config) => {
   config.headers["Access-Control-Allow-Origin"] = "*";
   config.headers["Access-Control-Allow-Headers"] =
