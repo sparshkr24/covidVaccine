@@ -1,23 +1,23 @@
-import { hash } from 'bcrypt';
-import prisma from '../../prisma/prisma';
-import jwt from 'jsonwebtoken';
+import { hash } from "bcrypt";
+import prisma from "../../prisma/prisma";
+import jwt from "jsonwebtoken";
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method Not Allowed' });
+  if (req.method !== "POST") {
+    return res.status(405).json({ message: "Method Not Allowed" });
   }
 
-  const { username, email, password, mobile, address, age } = req.body;
+  const { username, email, password, mobile, city, age } = req.body;
 
   if (!email) {
-    return res.status(400).json({ message: 'Email not found' });
+    return res.status(400).json({ message: "Email not found" });
   }
 
   try {
     // Check if the email already exists in the database
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
-      return res.status(409).json({ message: 'Email already exists' });
+      return res.status(409).json({ message: "Email already exists" });
     }
 
     // Hash the password
@@ -30,21 +30,23 @@ export default async function handler(req, res) {
         email,
         password: hashedPassword,
         mobile,
-        address,
+        city,
         age,
-        role: 'CLIENT',
+        role: "CLIENT",
       },
     });
 
     // Generate JWT token
-    const token = jwt.sign({ userId: newUser.id }, 'shivendra123');
+    const token = jwt.sign({ userId: newUser.id }, "shivendra123");
 
     // Set the token as an HTTP-only cookie
-    const data = {newUser, token}
+    const data = { newUser, token };
 
-    return res.status(201).json({ message: 'User registered successfully', user: data });
+    return res
+      .status(201)
+      .json({ message: "User registered successfully", user: data });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Internal Server Error' });
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 }

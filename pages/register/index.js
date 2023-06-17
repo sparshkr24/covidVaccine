@@ -1,5 +1,5 @@
 import * as React from "react";
-import axios from "axios";
+import api from "../../helper/api";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -24,7 +24,7 @@ function SignInSide() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const { username, email, password, password2, mobile, address, age } =
+    const { username, email, password, password2, mobile, city, age } =
       event.currentTarget.elements;
 
     const userData = {
@@ -34,7 +34,7 @@ function SignInSide() {
       password2: password2.value,
       role: "client",
       mobile: mobile.value,
-      address: address.value,
+      city: city.value,
       age: parseInt(age.value, 10),
     };
     console.log(userData);
@@ -57,20 +57,16 @@ function SignInSide() {
     toast.success("Form submitted successfully");
 
     try {
-      const res = await axios.post(
-        "http://localhost:3000/api/register",
-        userData
-      );
+      const res = await api.post("/register", userData);
       const { message, user } = res.data;
       console.log(message);
 
       const { newUser, token } = user;
       localStorage.setItem("token", token);
       localStorage.setItem("userData", JSON.stringify(newUser));
-      
-      
+
       if (token) {
-        toast.success("User Registered Succesfully!")
+        toast.success("User Registered Succesfully!");
         router.push("/");
       }
     } catch (error) {
@@ -172,10 +168,10 @@ function SignInSide() {
                 margin="normal"
                 required
                 fullWidth
-                id="address"
-                label="Address"
-                name="address"
-                autoComplete="address"
+                id="city"
+                label="City"
+                name="city"
+                autoComplete="city"
                 autoFocus
               />
 

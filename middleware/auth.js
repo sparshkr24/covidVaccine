@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-export function auth(handler) {
+export default function auth(handler) {
   return async (req, res) => {
     const token = req.headers.authorization?.replace('Bearer ', '') || req.cookies.token;
 
@@ -12,7 +12,7 @@ export function auth(handler) {
       const userId = decodedToken.userId;
 
       req.userId = userId;
-      
+
       return handler(req, res);
     } catch (error) {
       return res.status(401).json({ message: 'Unauthorized' });

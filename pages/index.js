@@ -1,30 +1,40 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Button from '@mui/material/Button';
-import CameraIcon from '@mui/icons-material/PhotoCamera';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import CssBaseline from '@mui/material/CssBaseline';
-import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Link from '@mui/material/Link';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import * as React from "react";
+
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import AppBar from "@mui/material/AppBar";
+import Button from "@mui/material/Button";
+import CameraIcon from "@mui/icons-material/PhotoCamera";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import CssBaseline from "@mui/material/CssBaseline";
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import Link from "@mui/material/Link";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
+import DataObjectIcon from "@mui/icons-material/DataObject";
+import { TextField } from "@mui/material";
 
 function Copyright() {
   return (
     <Typography variant="body2" color="text.secondary" align="center">
-      {'Copyright © '}
+      {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
+        Shivendra
+      </Link>{" "}
       {new Date().getFullYear()}
-      {'.'}
+      {"."}
     </Typography>
   );
 }
@@ -35,22 +45,101 @@ const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 const defaultTheme = createTheme();
 
 export default function Album() {
+  const router = useRouter();
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userData = JSON.parse(localStorage.getItem("userData"));
+
+    if (!token) {
+      router.push("/login");
+    } else {
+      setUser(userData);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userData");
+    router.push("/login");
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const { city } = event.currentTarget.elements;
+
+    const userData = {
+      city: city.value,
+    };
+
+    if (!userData.city) {
+      toast.error("Please enter your city");
+      return;
+    }
+    console.log(userData);
+
+    // try {
+    //   const res = await axios.post(
+    //     "http://localhost:3000/api/login",
+    //     userData
+    //   );
+    //   const { message, user } = res.data;
+    //   console.log(message);
+
+    //   const { currentUser, token } = user;
+    //   localStorage.setItem("token", token);
+    //   localStorage.setItem("userData", JSON.stringify(currentUser));
+
+    //   if (token) {
+    //     toast.success("User Logged In")
+    //     setTimeout(()=>{
+    //       router.push("/");
+    //     }, 1200)
+
+    //   }
+    // } catch (error) {
+    //   console.error(error);
+    //   toast.error("Invalid email or password");
+    // }
+  };
+  console.log(user);
   return (
     <ThemeProvider theme={defaultTheme}>
+      <ToastContainer />
       <CssBaseline />
       <AppBar position="relative">
         <Toolbar>
-          <CameraIcon sx={{ mr: 2 }} />
-          <Typography variant="h6" color="inherit" noWrap>
-            Album layout
-          </Typography>
+          <Grid container justifyContent="space-between" alignItems="center">
+            <Grid>
+              <DataObjectIcon sx={{ mr: 2 }} />
+              <Typography variant="h6" color="inherit" noWrap>
+                Covid vaccine
+              </Typography>
+            </Grid>
+            <Grid>
+              Welcome!{" "}
+              <span className="font-bold text-xl"> {user?.username} </span>
+            </Grid>
+            <Grid>
+              {" "}
+              <button
+                onClick={handleLogout}
+                className="hover:text-blue-600 hover:bg-white py-1.5 px-4 rounded-xl hover:scale-110 duration-300"
+              >
+                {" "}
+                Logout
+              </button>
+            </Grid>
+          </Grid>
         </Toolbar>
       </AppBar>
       <main>
         {/* Hero unit */}
         <Box
           sx={{
-            bgcolor: 'background.paper',
+            bgcolor: "background.paper",
             pt: 8,
             pb: 6,
           }}
@@ -63,22 +152,41 @@ export default function Album() {
               color="text.primary"
               gutterBottom
             >
-              Album layout
+              Enter your city
             </Typography>
-            <Typography variant="h5" align="center" color="text.secondary" paragraph>
-              Something short and leading about the collection below—its contents,
-              the creator, etc. Make it short and sweet, but not too short so folks
-              don&apos;t simply skip over it entirely.
-            </Typography>
-            <Stack
-              sx={{ pt: 4 }}
-              direction="row"
-              spacing={2}
-              justifyContent="center"
+            <Typography
+              variant="h5"
+              align="center"
+              color="text.secondary"
+              paragraph
             >
-              <Button variant="contained">Main call to action</Button>
-              <Button variant="outlined">Secondary action</Button>
-            </Stack>
+              Book slots for covid vaccination with simple steps.
+            </Typography>
+            <Box
+              component="form"
+              noValidate
+              onSubmit={handleSubmit}
+              sx={{ mt: 1 }}
+            >
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="city"
+                label="City"
+                name="city"
+                autoComplete="city"
+                autoFocus
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="outlined"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Search
+              </Button>
+            </Box>
           </Container>
         </Box>
         <Container sx={{ py: 8 }} maxWidth="md">
@@ -87,13 +195,17 @@ export default function Album() {
             {cards.map((card) => (
               <Grid item key={card} xs={12} sm={6} md={4}>
                 <Card
-                  sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+                  sx={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
                 >
                   <CardMedia
                     component="div"
                     sx={{
                       // 16:9
-                      pt: '56.25%',
+                      pt: "56.25%",
                     }}
                     image="https://source.unsplash.com/random?wallpapers"
                   />
@@ -102,8 +214,8 @@ export default function Album() {
                       Heading
                     </Typography>
                     <Typography>
-                      This is a media card. You can use this section to describe the
-                      content.
+                      This is a media card. You can use this section to describe
+                      the content.
                     </Typography>
                   </CardContent>
                   <CardActions>
@@ -117,7 +229,7 @@ export default function Album() {
         </Container>
       </main>
       {/* Footer */}
-      <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
+      <Box sx={{ bgcolor: "background.paper", p: 6 }} component="footer">
         <Typography variant="h6" align="center" gutterBottom>
           Footer
         </Typography>
