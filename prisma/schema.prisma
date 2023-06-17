@@ -41,7 +41,7 @@ model Appointment {
   userId              String
   vaccinationCenter   VaccinationCenter @relation(fields: [vaccinationCenterId], references: [id])
   vaccinationCenterId String
-  appointmentTime     DateTime
+  appointmentTime     String
 }
 
 // Enum defining different roles for the users

@@ -23,9 +23,8 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Link from "@mui/material/Link";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-import DataObjectIcon from "@mui/icons-material/DataObject";
+import VaccinesIcon from '@mui/icons-material/Vaccines';
 import { Chip, TextField } from "@mui/material";
 import { TimePicker } from "@mui/x-date-pickers";
 
@@ -52,18 +51,16 @@ export default function Album() {
   const [user, setUser] = useState({});
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
-  const [timeslot, setTimeslot] = useState(null);
+  const [timeSlot, setTimeSlot] = useState(null);
 
   const handleTimeChange = (newTime) => {
-  const formattedTime = newTime
-    ? newTime.$H + ":" + newTime.$m
-    : null;
-  setTimeslot(formattedTime);
-};
+    const formattedTime = newTime ? newTime.$H + ":" + newTime.$m : null;
+    setTimeSlot(formattedTime);
+  };
 
   // useEffect(()=>{
-  //   console.log('time: ', timeslot);
-  // }, [timeslot])
+  //   console.log('time: ', timeSlot);
+  // }, [timeSlot])
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -89,7 +86,7 @@ export default function Album() {
 
   useEffect(() => {
     fetchData();
-  });
+  }, []);
 
   const handleScroll = () => {
     const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
@@ -116,8 +113,6 @@ export default function Album() {
   };
 
   const handleSubmit = async (event) => {
-    setData([]);
-    setPage(1);
     event.preventDefault();
 
     const { city } = event.currentTarget.elements;
@@ -135,11 +130,11 @@ export default function Album() {
     try {
       const res = await api.get(`/centers/bycity?city=${userData.city}`);
       const newData = res.data;
-      console.log('value: ', newData);
+      console.log("value: ", newData);
       setData(newData);
     } catch (error) {
       console.error(error);
-      toast.error(`No Centers found in ${city}`); 
+      toast.error(`No Centers found in ${city}`);
     }
   };
 
@@ -157,18 +152,35 @@ export default function Album() {
     return formattedDate;
   };
 
-  const handleBookSlot = (centerId)=>{
-    if(!timeslot){
-      toast.error("Please select a timeslot!")
-      return
+  const handleBookSlot = (vaccinationCenterId) => {
+    if (!timeSlot) {
+      toast.error("Please select a timeSlot!");
+      return;
     }
-    const data = {userId: user.id, centerId, timeslot}
-    console.log(data);
-    // const bookSlot = async()=>{
-      
-    //   const res = await api.post('/bookslot', )
-    // }
-  }
+
+    const bookSlot = async () => {
+      const AppointmentData = { userId: user.id, vaccinationCenterId, timeSlot };
+      // console.log(data);
+      const res = await api.post("/bookslot", AppointmentData);
+      const result = res.data;
+      console.log(result);
+      if (!res.status == 200) {
+        toast.error("Cannot book this slot!");
+      } else {
+        toast.success("Congratulations!...Slot Booked!");
+        const updatedData = data.map((item) => {
+          if (item.id === vaccinationCenterId) {
+            return { ...item, slotsLeft: item.slotsLeft - 1 };
+          }
+          return item;
+        });
+
+        setData(updatedData);
+        setTimeSlot(null)
+      }
+    };
+    bookSlot();
+  };
   // console.log(user);
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -178,7 +190,7 @@ export default function Album() {
         <Toolbar>
           <Grid container justifyContent="space-between" alignItems="center">
             <Grid>
-              <DataObjectIcon sx={{ mr: 2 }} />
+              <VaccinesIcon sx={{ mr: 2 }} />
               <Typography variant="h6" color="inherit" noWrap>
                 Covid vaccine
               </Typography>
@@ -324,7 +336,10 @@ export default function Album() {
                       alignItems="center"
                     >
                       <Grid item>
-                        <button onClick={()=> handleBookSlot(item.id)} className="py-1.5 px-4 bg-blue-600 text-white border hover:text-blue-600 hover:bg-white rounded-xl duration-300 hover:scale-105">
+                        <button
+                          onClick={() => handleBookSlot(item.id)}
+                          className="py-1.5 px-4 bg-blue-600 text-white border hover:text-blue-600 hover:bg-white rounded-xl duration-300 hover:scale-105"
+                        >
                           Apply
                         </button>
                       </Grid>
@@ -332,7 +347,7 @@ export default function Album() {
                         <TimePicker
                           label="Pick slot"
                           sx={{ width: 180 }}
-                          value={timeslot}
+                          value={timeSlot}
                           onChange={handleTimeChange}
                         />
                       </Grid>

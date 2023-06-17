@@ -1,11 +1,12 @@
-import prisma from '../../../prisma/prisma';
+import prisma from '../../prisma/prisma';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  const { userId, vaccinationCenterId, appointmentTime } = req.body;
+  const { userId, vaccinationCenterId, timeSlot } = req.body;
+  console.log('bookslot: ', userId, vaccinationCenterId, timeSlot);
 
   try {
     // Check if the user and vaccination center exist
@@ -32,7 +33,7 @@ export default async function handler(req, res) {
       data: {
         user: { connect: { id: userId } },
         vaccinationCenter: { connect: { id: vaccinationCenterId } },
-        appointmentTime,
+        appointmentTime: timeSlot,
       },
     });
 
