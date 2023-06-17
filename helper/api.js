@@ -1,8 +1,12 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://covid-vaccine-two.vercel.app/api",
+  baseURL: "https://master--moonlit-palmier-a53915.netlify.app/api",
 });
+
+// const api = axios.create({
+//     baseURL: "http://localhost:3000/api",
+//   });
 
 api.interceptors.request.use((config) => {
   config.headers["Access-Control-Allow-Origin"] = "*";
